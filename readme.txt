@@ -49,6 +49,6 @@ SETTING ToolShare APPLICATION
 
 MAINTENANCE:
 -----------
-If have any problem the tool, please don't hesitate to contact me at: 
+If you have any problem running the app, please don't hesitate to contact me at: 
 
 ima9428@rit.edu or ibrr1@hotmail.com
