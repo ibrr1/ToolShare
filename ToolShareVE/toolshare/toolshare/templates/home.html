@@ -1,0 +1,41 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Welcome
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+
+<div class="container">
+    <h2 style=" font-size: 210%; font-family: 'Hammersmith One', sans-serif;" class="text-primary text-center">Welcome to ToolShare</h2><br>
+    <div class="row">
+        <div class="center-block" style="width:500px;">
+            <div class="panel panel-default ">
+                <div class="panel-heading"><h4>Log In</h4></div>
+                <div class="panel-body">
+                    {% if messages %}
+                    <b class="messages">
+                        {% for msg in messages %}
+                        <div class="alert alert-{{msg.level_tag}}" style="background-color: #f7c3c3; font-weight: normal" role="alert">
+                            {{msg.message}}
+                            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                        </div>
+                        {% endfor %}
+                    </b>
+                    {% endif %}
+                    <form class="form-signin" action="" method="POST">
+                        {% csrf_token %}
+                        {{ login_form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-check"></span> Log In </button>
+                        <br>
+                        <a href="/registration">Don't have an account? Sign up </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

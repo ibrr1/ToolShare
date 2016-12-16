@@ -1,0 +1,68 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Hammersmith+One' rel='stylesheet' type='text/css'>    
+    <style>
+        .controls > select{
+          margin-bottom: 2%
+        }
+        
+        .parent .popup {
+          display: none;
+        }
+        
+        .parent:hover .popup {
+          display: block;
+        }
+        
+        #id_zip_code{
+          width: 26%;
+        }
+        
+        #id_shed_name, /*.update-tool #id_name*/{
+          width: 50%;
+        }
+        
+        /*#id_first_name, 
+        #id_last_name,
+        #id_shed_name, 
+        #id_email, 
+        #id_name, 
+        #tool_name_search, 
+        #id_password, 
+        #id_password_verification,
+        #id_zip_code, 
+        #id_state{
+          text-align: center;
+        }*/
+    </style>
+
+    <script data-require="jquery@*" data-semver="2.0.3" src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js"></script>
+
+    <title>{% block title %}| ToolShare{% endblock %}</title>
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/starter-template.css' %}" rel="stylesheet">
+    <script src="{% static 'js/ie-emulation-modes-warning.js' %}"></script>
+  </head>
+  <body>
+    {% block content %}
+
+    {% endblock %}
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %} "></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  </body>
+</html>

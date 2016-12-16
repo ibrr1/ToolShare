@@ -1,0 +1,154 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Search Tools
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+
+<!-- check if there is a notification message -->
+{% if messages %}
+<b class="messages">
+    {% for msg in messages %}
+    <div {% if error or 'coordinator' in msg.message %} style="background-color: #f7c3c3; font-weight: normal" {% endif %} class="alert alert-{{msg.level_tag}}" role="alert">
+        {{msg.message}}
+        <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+    </div>
+    {% endfor %}
+</b>
+{% endif %}
+
+<div class="container">
+    <div class="row" style="padding:10px">
+        <br>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>Search for a Tool</h4></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <legend><span class="glyphicon glyphicon-search"></span> Search</legend>
+
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            {{ search_form|crispy }}
+                            <button type="submit" class="btn btn-primary btn-block"><span class="glyphicon glyphicon-search"></span>  Search </button>
+
+                        </form>
+                    </div>
+                    <div class="col-md-9">
+                        <legend><span class="glyphicon glyphicon-th-list"></span> Search Results</legend>
+            <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete "<span class="toolname"></span>" ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <a class="btn btn-danger btn-ok"> Confirm delete</a>
+                        </div>
+                    </div>
+                 </div>
+               </div>
+               <div class="modal fade" id="confirm-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Confirm Request</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to request "<span class="toolname"></span>" ?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <a class="btn btn-success btn-ok">Confirm</a>
+                        </div>
+                    </div>
+                 </div>
+               </div>
+                    <table class="table table-striped">
+                        <tr class="info">
+                            <td><b>Tool name</b></td>
+                            <td><b>Condition</b></td>
+                            <td><b>Category</b></td>
+                            <td><b>Status</b></td>
+                            <td><b>Action</b></td>
+                        </tr>
+                            {% if queryset %}
+                            {% for instance in queryset %}
+                        <tr>
+                            <td> 
+                                {% if instance.owner.email == tool_owner %} 
+                                    <a class="glyphicon glyphicon-pencil" href="/user_profile/manage_tools/{{ instance.name }}/update_tool/{{ instance.id }}"></a> 
+                                {% endif %}
+                                
+                                <a href="/user_profile/manage_tools/{{ instance.name }}/tool_profile/{{ instance.id }}">
+                                    {{instance.name}}
+                                </a>
+                            </td>
+                            <td>{{ instance.condition }}</td>
+                            <td>{{ instance.category }}</td>
+                            <td>
+                                {% if instance.status == 'Unavailable' %}
+                                    <span style="color: red">{{ instance.status }}</span>
+                                {% else %}
+                                    <span style="color: green">{{ instance.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                            {% if instance.owner.email == tool_owner %}
+                            <button class="btn btn-danger btn-sm btn-block btn-ok" data-tool-name="{{ instance.name }}" data-href="/user_profile/manage_tools/all_tools/search/delete/{{ instance.id }}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+
+                            <br>
+                            {% else %}
+                                <a class="btn btn-primary btn-sm btn-block btn-ok" href="/user_profile/manage_tools/all_tools/share_zone_tools/request/{{ instance.id }}"><span class="glyphicon glyphicon-check"></span> Request</a>
+                            {% endif %}
+                            </td>
+                         </tr>
+                        <script>
+                            $('#confirm-delete').on('show.bs.modal', function(e) {
+                                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                                $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                                $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                                $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+                            });
+                             $('#confirm-request').on('show.bs.modal', function(e) {
+                                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                                $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                                $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                                $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+                            });
+                        </script>
+                            {% endfor %}
+                    </table>
+                    {% else %}
+                    <table>
+                        <tr>
+                           <td style="width: 100%; padding: 5%">
+                                {% if not_found %}
+                                    <div class="bg-warning" style="text-align:center; padding: 3%;">
+                                        *** No results found ***
+                                    </div>
+                                {% endif %}
+                           </td>
+                        </tr>
+                    </table>
+                    {% endif %}
+                 </div>
+              </div>
+           </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+{% endblock %}

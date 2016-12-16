@@ -1,0 +1,99 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    User Profile {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    {% if messages %}
+    <b class="messages">
+        {% for msg in messages %}
+        <div class="alert alert-{{msg.level_tag}}" style="font-weight: normal" role="alert">
+            {{msg.message}}
+            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+        </div>
+        {% endfor %}
+    </b>
+    {% endif %}
+    
+    <div class="container">
+        
+            <!-- Start dialog box -->
+            <div class="modal fade" id="show-admins" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-user"></span> Shed Administrators</h4>
+                        </div>
+                        <div class="modal-body">
+                            
+                            <ul>
+                                {% for coordinator in shed_coordinators %}
+                                    <li>
+                                        <div style="width: 93%; word-wrap: break-word;">
+                                            {{ coordinator }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST" action="">
+                                <a class="btn btn-default btn-ok" data-dismiss="modal">Close</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End dialog bog -->
+            
+            <div class="row">
+                <br><br>
+                <div class="panel panel-default cols-md-8">
+                    
+                    <div class="panel-heading">
+                        <h4 style="font-size: 140%; font-family: 'Hammersmith One', sans-serif;">Welcome</h4>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6" style="padding: 1% 0 0 2%">
+                                <legend ><span class="glyphicon glyphicon-user"></span> Your Personal Information</legend> 
+                                <div style="width: 93%; word-wrap: break-word;">
+                                    <b>You name:</b> {{ user.first_name }} {{ user.last_name }}
+                                </div>
+                               
+                                <div style="width: 93%; word-wrap: break-word;">
+                                    <b>Email:</b> {{ user.email }}
+                                </div>
+                                
+                                <div style="width: 93%; word-wrap: break-word;">
+                                    <b>Address:</b> {{ user.address }}
+                                </div>
+                                <br>
+                                <a href="/user_profile/update_account/">Edit personal information</a>
+                            </div>
+                            <div class="col-md-6" style="padding: 1% 0 0 2%">
+                                <legend><span class="glyphicon glyphicon-screenshot"></span> Share Zone Information</legend>
+                                <b>Share zone zip code :</b> {{ zip_code }} <br>
+                                <b>Shed name:</b> {{ shed_name }} <br>
+                                <div style="width: 90%; word-wrap: break-word">
+                                    <b>Shed address:</b> {{ shed_address }}
+                                </div>
+                                <b>Shed coordinator(s):</b> <br>
+                                <a href="" class="btn-ok" data-toggle="modal" data-target="#show-admins">show admins</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% include 'community_statistics.html' %}
+
+{% endblock %}

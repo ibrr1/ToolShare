@@ -1,0 +1,89 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Update Info
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+
+{% if messages %}
+    <b class="messages">
+        {% for msg in messages %}
+        <div style="background-color: #f7c3c3; color: black; font-weight: normal" class="alert alert-{{msg.level_tag}}" role="alert">
+            {{ msg.message }}
+            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+            <!--<a href="/user_profile/select_admin/"><span class="glyphicon glyphicon-pencil"></span> {{msg.message}}</a>
+            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>-->
+        </div>
+        {% endfor %}
+    </b>
+{% endif %}
+<div class="container">
+    <!-- start -->
+    <br>
+        <div class="modal fade" id="confirm-personal-info-update" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm Update</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to update your personal information?</p>
+
+                        <br>
+                        <p style="color: red"><b>Important: </b> if you modified your personal address, and change to an existent
+                        or non-existent share zone, the tool's information will be adapted to the location of this new share zone.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+                            <button class="btn btn-primary btn-ok">Confirm update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end -->
+    <div class="col-md-12" style="padding:5px">
+        <br>
+    </div>
+    <span style="color:red">{{ error }}</span>
+    <div class="panel panel-default" style="width: 60%; margin: 0 auto">
+        <div class="panel-heading"><h4>Update your information</h4></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <legend><span class="glyphicon glyphicon-user"></span> Profile Information:</legend>
+                        {% csrf_token %}
+                        {{ form_user_personal_information|crispy }}
+                        <div style="text-align: right">
+                            <a href="/change_password">Change your password</a>
+                        </div>
+                </div>
+                <div class="col-lg-6">
+                    <legend><span class="glyphicon glyphicon-home"></span> Address Information:</legend>
+                    {{ form_address|crispy }}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <!--<input type="submit" value="Update" class="btn btn-primary">-->
+            <button class="btn btn-primary btn-ok" data-toggle="modal" data-target="#confirm-personal-info-update">Update</button>
+            <a style="margin-left: 1%" href="/user_profile">Cancel</a>
+        </div>
+        <script>
+            function stopRKey(evt) {
+              var evt = (evt) ? evt : ((event) ? event : null);
+              var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+              if ((evt.keyCode == 13) && (node.type=="text") || (node.type=="password"))   {return false;}
+            }
+            document.onkeypress = stopRKey;
+        </script>
+    </div>
+</div>
+{% endblock %}

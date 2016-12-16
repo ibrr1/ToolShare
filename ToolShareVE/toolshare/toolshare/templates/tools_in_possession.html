@@ -1,0 +1,76 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Tools Requested
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+    {% if messages %}
+        <b class="messages">
+            {% for msg in messages %}
+                <div class="alert alert-{{msg.level_tag}}" role="alert">
+                    {{msg.message}}
+                    <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                </div>
+            {% endfor %}
+         </b>
+    {% endif %}
+    <div class="container">
+        <div class="modal fade" id="accept-tool-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                    </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to accept this request?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary btn-ok">Confirm your acceptance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <br>
+        <div class="panel panel-default cols-md-8">
+            <div class="panel-heading"><h4>Tools in your possession</h4></div>
+        	<div class="panel-body">
+				<table class="table table-striped">
+                    {% if tools_in_possession %}
+                        <tr class="info">
+                            <td><b>Name</b></td>
+                            <td><b>Owner</b></td>
+                            <td><b>Usage start date</b></td>
+                            <td><b>Return date</b></td>
+                        </tr>
+                        {% for tool in tools_in_possession %}
+                            <tr>
+                                <td>{{ tool.tool.name }}</td>  
+                                <td>{{ tool.tool.owner.first_name }} {{ tool.tool.owner.last_name }} ({{ tool.tool.owner.email }})</td>
+                                <td>{{ tool.start_time }}</td>      
+                                <td>{{ tool.return_time }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <h3>* Currently, you have no tools in your possession. *</h3>
+                    {% endif %}
+				</ul>
+        	</div>
+        </div>
+    </div>
+    <script>
+        $('#accept-tool-request').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+            $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+            $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+        });
+    </script>
+</div>
+{% endblock %}

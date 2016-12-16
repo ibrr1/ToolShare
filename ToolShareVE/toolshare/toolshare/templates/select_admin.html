@@ -1,0 +1,94 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Tools
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    {% if messages %}
+    <b class="messages">
+        {% for msg in messages %}
+        <div class="alert alert-{{msg.level_tag}}" style="font-weight: normal" role="alert">
+            {{msg.message}}
+            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+        </div>
+        {% endfor %}
+    </b>
+    {% endif %}
+    <div class="container">
+        
+    <div class="modal fade" id="confirm-admin-selection" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Request</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to promote "<span class="username"></span>" as an admin?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary btn-ok">Confirm promotion</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <div class="row" style="padding:10px">
+            <br>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Add an Admin</h4></div>
+                <div class="panel-body">
+    
+                    <div class="col-md-12">
+                        <legend><span class="glyphicon glyphicon-th-list"></span> Users in the share zone</legend>
+    
+                        <table class="table table-striped">
+                            <tr class="info">
+                                <td style="text-align: center"><b>Name</b></td>
+                                <td style="text-align: center"><b>Email</b></td>
+                                <td style="text-align: center"><b>Action</b></td>
+                            </tr>
+                            {% if users %}
+                            {% for user in users %}
+                            <tr>
+                                <td style="text-align: center">{{ user.first_name}} {{ user.last_name}}</td>
+                                <td style="text-align: center">{{ user.email }}</td>
+                                <td style="text-align: center">
+                                    <button class="btn btn-primary btn-sm" data-user-name="{{ user.first_name }} {{ user.last_name }}" data-href="/user_profile/select_admin/{{ user.id }}" data-toggle="modal" data-target="#confirm-admin-selection">Add "{{ user.first_name}} {{ user.last_name }}" as an admin</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% else %}
+                        <table>
+                            <tr>
+                                <td colspan="6">
+                                    <h4>* No users are available *</h4>
+                                </td>
+                            </tr>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('#confirm-admin-selection').on('show.bs.modal', function(e) {
+                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+                
+                $(this).find('.btn-ok').attr('user-name', $(e.relatedTarget).data('user-name'));
+                $('.username').html($(this).find('.btn-ok').attr('user-name'));
+            });
+        </script>
+    </div>
+
+{% endblock %}

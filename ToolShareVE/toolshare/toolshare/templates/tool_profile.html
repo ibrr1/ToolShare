@@ -1,0 +1,121 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Tool profile
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+
+{% if messages %}
+<b class="messages">
+    {% for msg in messages %}
+    <div class="alert alert-{{msg.level_tag}}" style="background-color: #f7c3c3; font-weight: normal" role="alert">
+        {{msg.message}}
+        <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+    </div>
+    {% endfor %}
+</b>
+{% endif %}
+<div class="container">
+    <div class="modal fade" id="confirm-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Confirm Request</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to request "{{ tool_name }}"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="/user_profile/manage_tools/all_tools/tool_profile/request/{{ tool_id }}" type="submit" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-check"></span> Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" style="padding:5px">
+        <br>
+    </div>
+    <h2><br></h2>
+    <span style="color:red">{{ error }}</span>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3> Tool Profile</h3></div>
+        <div class="panel-body">
+            <div class="row" style="table-layout: fixed; width: 100%">
+                <div class="col-lg-6" style="word-wrap: break-word">
+                    <legend><span class="glyphicon glyphicon-wrench"></span> Tool Information:</legend>
+                    <div style="word-wrap: break-word">
+                        <b>Name: </b> {{ tool_name }}</b>
+                    </div><br>
+                    <div style="word-wrap: break-word">
+                        <b>Description:</b> {{ tool_description }}
+                    </div><br>
+                    <b>Category: </b> {{ tool_category }} <br><br>
+                    <b>Condition: </b> {{ tool_condition }} <br><br>
+                    <div style="word-wrap: break-word">
+                        <b>Tool Location: </b> {{ tool_location }}
+                    </div><br>
+                    <b>Status: </b> 
+                    {% if tool_status == 'Available' %}
+                        <span style="color: green">{{ tool_status }}</span>
+                    {% else %}
+                        <span style="color: red">{{ tool_status }}</span>
+                    {% endif %}
+                </div>
+                {% if tool_location == owner_address %}
+                <div class="col-lg-6">
+                    <legend><span class="glyphicon glyphicon-user"></span> Tool Owner Information:</legend>
+                    <div style="width: 93%; word-wrap: break-word">
+                        <b>Name: </b>  {{ owner_first_name }} {{ owner_last_nmae }} 
+                    </div><br>
+                    <div style="width: 93%; word-wrap: break-word;">
+                        <b>Email: </b> {{ owner_email }}  
+                    </div><br>
+                    <div style="word-wrap: break-word">
+                        <b>Address: </b> {{ owner_address }}
+                    </div><br>
+                </div>
+                {% else %}
+                 <div class="col-lg-6">
+                    <legend><span class="glyphicon glyphicon-home"></span> Shed Information:</legend>
+                        <div style="word-wrap:break-word;">
+                            <b>Shed Name: </b> {{ shed_name }}
+                        </div><br>
+                        <div style="word-wrap:break-word;">
+                            <b>Address: </b> {{ shed_address }}
+                        </div><br>
+                    <b>Coordinator Name(s): </b><br>
+                     {% for coordinator in shed_coordinators %}
+                     {{ coordinator }}<br>
+                     {% endfor %}
+                     <br>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel-footer">
+            {% if current_user == tool_owner %}
+            <a href="/user_profile/manage_tools/{{ tool_name }}/update_tool/{{ tool_id }}" type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-check"></span> Edit</a>
+
+            {%elif is_owner == True%}
+
+            {% else %}
+            <a class="btn btn-primary" href="/user_profile/manage_tools/all_tools/share_zone_tools/request/{{ tool_id }}"><span class="glyphicon glyphicon-check"></span> Request</a>
+            {% endif %}
+            <a style = "margin-left: 1%" href="/user_profile/manage_tools/all_tools/share_zone_tools/">Back to Tools</a>
+        </div>
+    </div>
+    <script>
+        $('#confirm-request').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+            $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+            $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+        });
+    </script>
+</div>
+{% endblock %}

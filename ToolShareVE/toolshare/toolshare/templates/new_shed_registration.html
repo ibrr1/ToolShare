@@ -1,0 +1,40 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    New Shed Creation
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    <!-- fixed message -->
+    <div class="alert alert-info" style="text-align:center">
+        Since you are the first user registering share zone {{ zip_code }}, you must create a shed and become shed admin.
+    </div>
+    
+    <div class="container">
+        <div class="col-md-12" style="padding:5px"></div>
+            <h2><br></h2>
+        <div class="row">
+            <div class="center-block" style="width:600px;">
+                <div class="panel panel-default ">
+                    <div class="panel-heading">
+                        <h4>Register New Shed</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form action="" method="POST">
+                            <!-- new shed registration form -->
+                            {% csrf_token %}
+                            {{ shed_reg_form|crispy }}
+                            <button type="submit" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-check"></span> Create Shed 
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

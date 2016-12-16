@@ -1,0 +1,44 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Tool profile
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    <div class="container">
+        <div class="col-md-12" style="padding:5px">
+            <br>
+        </div>
+        <h2><br></h2>
+        <span style="color:red">{{ error }}</span>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h3> User Profile</h3></div>
+            <div class="panel-body">
+                <div class="row" style="table-layout: fixed; width: 100%">
+                    <div class="col-lg-6" style="word-wrap: break-word">
+                        <legend><span class="glyphicon glyphicon-user"></span> Personal Information:</legend>
+                        <b>Name:</b> {{ user.first_name }} {{ user.last_name }}</b> <br><br>
+                        <b>Email:</b>  {{ user.email }} <br><br>
+                        <b>Address:</b> {{ user.address }} <br><br>
+                        
+                        <b>User type: </b> 
+                        {% if user.admin %}
+                            Shed admin
+                            
+                        {% else %}
+                            Regular user
+                            
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <a style="margin-left: 1%" href="/user_profile/manage_tools/all_tools/share_zone_tools/">Back to User Profile</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Requested Tools
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+    <div class="container">
+
+        <div class="modal fade" id="delete-tool-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm cancel tool request</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to cancel this tool request?</p>
+                    </div>
+                    <div class="modal-footer">
+                            <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+                            <a class="btn btn-danger btn-ok"><span class="glyphicon glyphicon-remove"></span> Cancel Request</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="row">
+        <br>
+        <div class="panel panel-default cols-md-8">
+            <div class="panel-heading"><h4>Requested Tools</h4></div>
+        	<div class="panel-body">
+				<table class="table table-striped">
+                    {% if requested_tools %}
+                        <tr class="info">
+                            <td><b>Tool name</b></td>
+                            <td><b>Condition</b></td>
+                            <td><b>Category</b></td>
+                            <td><b>Action</b></td>
+                        </tr>
+                        {% for instance in requested_tools %}
+                            <tr>
+                                <td>{{ instance.name }}</td>  
+                                <td>{{ instance.condition }}</td>
+                                <td>{{ instance.category }}</td>
+                                <td>
+                                    <button data-href="/cancel_request/{{ instance.id }}"  class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete-tool-request"><span class="glyphicon glyphicon-remove"></span> Cancel tool request</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <h3>* No requested tools to display. *</h3>
+                    {% endif %}
+				</ul>
+        	</div>
+        </div>
+    </div>
+    <script>
+        $('#delete-tool-request').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+            $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+            $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+        });
+    </script>
+</div>
+{% endblock %}

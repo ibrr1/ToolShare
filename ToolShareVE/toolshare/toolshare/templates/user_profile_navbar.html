@@ -1,0 +1,130 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+{% load crispy_forms_tags %}
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid" style="margin:0 5% 0 5%">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {% if login_page or registration_page %}
+                <a  class="navbar-brand"  style=" color:#ffffff; font-size: 160%; font-family: 'Hammersmith One', sans-serif;" href="/"> ToolShare</a>
+            
+            {% elif shed_creation_page %}
+                <a  class="navbar-brand"  style=" color:#ffffff; font-size: 160%; font-family: 'Hammersmith One', sans-serif;" href="#"> ToolShare</a>
+            
+            {% else %}
+                <a  class="navbar-brand"  style=" {% if user_profile_page %} color:#ffffff; {%endif%} font-size: 160%; font-family: 'Hammersmith One', sans-serif;" href="/user_profile"> ToolShare</a>
+            
+            {% endif %}
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            {% if login_page or registration_page or shed_creation_page %}
+                <ul class="nav navbar-nav navbar-right">
+                    {% if login_page %}
+                        <li><a href="/registration">Register Now</a></li>
+                        
+                    {% elif registration_page %}
+                        <li><a href="/">Have an account, Log in</a></li>
+                    
+                    {% elif shed_creation_page %}
+                        <li><a href="/user_profile/logout">Logout</a></li>
+                    {% endif %}
+                </ul>
+            {% else %}
+            <ul class="nav navbar-nav">
+               <li {% if manage_tools %} class="active"{% endif %}><a href="/user_profile/manage_tools/all_tools/share_zone_tools/">
+                    <span class="glyphicon glyphicon-wrench"></span> Tools</a>
+               </li>
+               <li {% if Tool_Requested_page %} class="active"{% endif %}>
+                   <a href="/incoming_tool_requests">
+                        <span class="glyphicon glyphicon-log-in"></span>  Tool Requested 
+                        {%if tool_requested_number == 0%}
+                            <span class="badge">
+                                {{ tool_requested_number }}
+                            </span>
+                        {% else %} 
+                            <span style="background-color: #ff0000;" class="badge">
+                                {{ tool_requested_number }}
+                            </span>
+                        {%endif%}
+                    </a>
+               </li>
+               <li {% if notifications_page %} class="active"{% endif %}>
+                   <a href="/notifications"><span class="glyphicon glyphicon-bell"></span> Notifications 
+                        {%if num_notification == 0%}
+                            <span class="badge">
+                                {{ num_notification }}
+                            </span>
+                        {%else%} 
+                            <span style="background-color: #ff0000;" class="badge">
+                                {{ num_notification }}
+                            </span>
+                        {%endif%}
+                   </a>
+                </li>
+                <li {% if search_page %} class="active"{% endif %}>
+                    <a href="/user_profile/search"><span class="glyphicon glyphicon-search"></span> Search Tool</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hello, 
+                        {% if user.first_name|length > 20 %}
+                        
+                            {{ user.first_name|slice:"20" }}...
+                            
+                            {% if user.admin %}
+                                (shed's admin)
+                            
+                            {% endif %}
+                            
+                        {% else %}
+                        
+                            {{user.first_name}}
+                            
+                            {% if user.admin %}
+                                (shed's admin)
+                                
+                            {% endif %}
+                        {% endif %}
+                        <span class="caret"></span>
+                    </a>      
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/user_profile/manage_tools/all_tools">My tools</a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="/user_profile/update_account">Update your information</a>
+                        </li>
+                        <li>
+                            <a href="/change_password">Change your password</a>
+                        </li>
+                        {% if user.admin == True %}
+                            <li>
+                                <a href="/user_profile/select_admin">Add shed administrator</a>
+                            </li>
+                        {% endif %}
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a href="/user_profile/logout">Log out</a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+              </ul>
+        </div>
+    </div>
+</nav>
+<noscript style="text-align: center">
+  <div class="alert alert-danger">
+      <h4>A bunch of features disabled because Javascript is also disabled. Please enable Javascript to make toolshare functional.</h4>
+      <a href="http://activatejavascript.org/en/instructions/ie#instructions" target="_blank">Enable JavaScript</a>
+  </div>
+</noscript>

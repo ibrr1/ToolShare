@@ -1,0 +1,392 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Tools
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    {% if messages %}
+    <b class="messages">
+        {% for msg in messages %}
+        <div {% if error == True or "unavailable" in msg.message or "coordinator" in msg.message %} 
+                style="background-color: #f7c3c3; font-weight: normal" 
+             {% endif %} 
+             style="font-weight: normal" class="alert alert-{{msg.level_tag}}" role="alert">
+            {{msg.message}}
+            <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+        </div>
+        {% endfor %}
+    </b>
+    {% endif %}
+    
+    <div class="container">
+        <div class="row" style="padding:10px">
+            <br>
+            
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>Tools</h4></div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <legend><span class="glyphicon glyphicon-wrench"></span> Add a Tool</legend>
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                {{ tool_form|crispy }}
+                                <input type="submit" value="Add Tool" class="btn btn-primary btn-block">
+                            </form>
+                            <script>
+                                    var supportOnInput = 'oninput' in document.createElement('input');
+
+                                    $("textarea[maxlength]").each(function() {
+                                        var $this = $(this);
+                                        var maxLength = parseInt($this.attr('maxlength'));
+                                        $this.attr('maxlength', null);
+                                            
+                                        var el = $("<span class=\"character-count\">"+ maxLength + " characters allowed" + "</span>");
+                                        el.insertAfter($this);
+                                            
+                                        $this.bind(supportOnInput ? 'input' : 'keyup', function() {
+                                        var cc = $this.val().length;
+                                            
+                                        el.text(maxLength - cc + "  characters allowed");
+                                            
+                                        if(maxLength < cc) {
+                                            el.css('color', 'red');
+                                        } 
+                                        else {
+                                            el.css('color', 'green');
+                                        }
+                                      });
+                                    });
+                                </script>
+                        </div>
+                        <div class="col-md-9">
+                            <legend><span class="glyphicon glyphicon-th-list"></span> List of Tools </legend>
+    
+                            <div class="btn-group" role="group" aria-label="...">
+                                <a  class="btn btn-default" href="/user_profile/requested_tools/">
+                                    Requested tools
+                                    {% if num_requested_tools == 0 %}
+                                        <span style="background-color: #777777" class="badge"> 
+                                            {{ num_requested_tools }} 
+                                        </span>
+                                    {% else %}                
+                                        <span style="background-color: #ff0000;" class="badge">
+                                            {{ num_requested_tools }}
+                                        </span>
+                                    {% endif %}
+                               </a>
+                               <a  class="btn btn-default" href="/user_profile/my_borrowed_tools">
+                                    Return tools
+                                    {% if my_borrowed_tools == 0 %}
+                                        <span style="background-color: #777777" class="badge"> 
+                                           {{ my_borrowed_tools }} 
+                                        </span>
+                                    {% else %}
+                                        <span style="background-color: #ff0000" class="badge"> 
+                                           {{ my_borrowed_tools }} 
+                                        </span>
+                                    {% endif %} 
+                                </a>
+
+                            <!--Personal statistics-->
+                            <div class="modal fade" id="personal_statistics" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Personal Statistics</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                             <div class="row" style="table-layout: fixed; width: 100%">
+                                               <div class="col-lg-6" style="word-wrap: break-word">
+                                                <legend style="margin-bottom: 0%">Most lent tools:</legend>
+                                                    <table class="table table-striped">
+                                                        <tr>
+                                                            <th style="padding: 3%">Tool name</th>
+                                                            <th style="padding: 3%">Times used</th>
+                                                        </tr>
+                                                        {% for most_lent_tool in user_most_used_tools %}
+                                                        <tr>
+                                                            <td>
+                                                                {{ most_lent_tool.tool_requested__name }}
+                                                            </td>
+                                                            <td>
+                                                                {{ most_lent_tool.tool_requested__count }}
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
+
+                                                <div class="col-lg-6" style="word-wrap: break-word">
+                                                    <legend style="margin-bottom: 0%">Most borrowed tools</legend>
+                                                    <table class="table table-striped">
+                                                        <tr>
+                                                            <th style="padding: 3%">Tool name</th>
+                                                            <th style="padding: 3%">Times used</th>
+                                                        </tr>
+                                                        {% for most_borrowed_tool in user_most_borrowed_tools %}
+                                                        <tr>
+                                                            <td>
+                                                                {{ most_borrowed_tool.tool_requested__name }}
+                                                            </td>
+                                                            <td>
+                                                                {{ most_borrowed_tool.tool_requested__count }}
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </table>
+                                                </div>
+                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn-ok btn btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <a  class="btn btn-default btn-ok" data-tool-name="{{ instance.name }}" data-href="delete/{{ instance.id }}" data-toggle="modal" data-target="#personal_statistics">
+                                    Personal statistics
+
+                                </a>
+                            </div>
+                            <span class="pull-right">
+                                <div class="btn-group dropup">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-filter"></span> Filter tools</button>
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/user_profile/manage_tools/all_tools/share_zone_tools" {% if zone_tools %} style="background-color: #eeeeee; color: black; font-weight:bold" {% endif %} title="Display all tools within your share zone">Share zone tools</a> </li>
+                                        <li><a  href="/user_profile/manage_tools/all_tools/tools_shed" {% if shed_tools %} style="background-color: #eeeeee; color: black; font-weight:bold" {% endif %} title="Display all tools located in the shed">Shed tools</a> </li>
+                                        <li><a href="/user_profile/manage_tools/all_tools/" {% if all_tools %} style="background-color: #eeeeee; color: black; font-weight:bold" {% endif %} title="Display all your tools">My tools</a> </li>
+                                        <li><a  href="/user_profile/manage_tools/all_tools/home_tools" {% if home_tools %} style="background-color: #eeeeee; color: black; font-weight:bold" {% endif %} title="Display tools located at your house">Home tools</a> </li>
+                                    </ul>
+                                </div>
+                            </span>
+                            <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Confirm Delete</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete "<span class="toolname"></span>" ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            <a class="btn btn-danger btn-ok">Confirm delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Tool profile -->
+
+                            <div class="modal fade" id="tool-info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-wrench"></span> Tool Profile</h4>
+                                        </div>
+
+                                        <div class="modal-body">
+                                             <div class="row" style="table-layout: fixed; width: 100%">
+                                               <div class="col-lg-6" style="word-wrap: break-word">
+                                                <legend>Tool Information:</legend>
+                                                    <p><b>Tool name: </b> <span class="toolname"></span> </p>
+                                                    <p><b>Description: </b> <span class="tooldescription"></span> </p>
+                                                    <p><b>Category </b> <span class="toolcategory"></span> </p>
+                                                    <p><b>condition: </b> <span class="toolcondition"></span> </p>
+                                                    <p><b>Status: </b> <span class="toolstatus"></span> </p>
+                                                    <p><b>Location: </b> <span class="toollocation"></span> </p>
+                                                </div>
+
+                                                <div class="col-lg-6" style="word-wrap: break-word">
+                                                    <legend>Tool <span class="title"></span> Information:</legend>
+
+                                                   <p><b>Name: </b>  <span class="name"></span> </p>
+                                                    <p><b>Address: </b>  <span class="address"></span> </p>
+
+                                                </div>
+                                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-ok btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Tool Address-->
+                            <div class="modal fade" id="tool-address" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-md ">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel">Tool Address</h4>
+                                        </div>
+                                        <div class="modal-body">
+											<div style="width:100%; word-wrap: break-word;">
+												<span class="tooladdress"></span>
+											</div>
+										</div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn-ok btn btn-default" data-dismiss="modal">Cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <table class="table table-striped">
+                            <tr class="info">
+                                <td><b>Tool name</b></td>
+                                <td><b>Condition</b></td>
+                                <td><b>Category</b></td>
+                                <td><b>Location</b></td>
+                                <td><b>Status</b></td>
+                                <td><b>Action</b></td>
+                            </tr>
+                            </tr>
+                                {% if queryset %}
+                                    {% for instance in queryset %}
+                                        <tr>
+                                            <td>
+                                                {% if instance.owner.email == user.email %}
+                                                    <a class="glyphicon glyphicon-pencil" href="/user_profile/manage_tools/{{ instance.name }}/update_tool/{{ instance.id }}"></a>
+    
+                                                {% elif user.admin == True and instance.location == user_shed.address %}
+                                                    <a  class="glyphicon glyphicon-pencil" href="/user_profile/manage_tools/{{ instance.name }}/update_tool/{{ instance.id }}"></a>
+    
+                                                {% endif %}
+
+                                                <a href="" class="btn-ok"
+                                                   data-tool-name="{{ instance.name }}"
+                                                   data-tool-description="{{ instance.description }}"
+                                                   data-tool-category="{{ instance.category }}"
+                                                   data-tool-condition="{{ instance.condition }}"
+
+                                                   {% if instance.owner.address == instance.location %}
+                                                        data-title="Owner"
+                                                        data-name="{{ instance.owner.first_name }} {{ instance.owner.last_name }}"
+                                                        data-address="{{ instance.owner.address }}"
+                                                   {% else %}
+                                                        data-title="Shed"
+                                                        data-name="{{ shed.name }}"
+                                                        data-address="{{ shed.address }}"
+                                                   {% endif %}
+
+                                                   data-tool-location="{{ instance.location }}"
+                                                   data-tool-status="{{ instance.status }}"
+
+                                                   data-owner-name="{{ instance.owner.first_name }}"
+                                                   data-owner-email="{{ instance.owner.email }}"
+                                                   data-owner-address="{{ instance.owner.address }}"
+
+                                                   data-toggle="modal" data-target="#tool-info"> {{ instance.name }}</a>
+
+
+                                            </td>
+                                            <td>{{ instance.condition }}</td>
+                                            <td>{{ instance.category }}</td>
+                                            {% if instance.location == instance.owner.address %}
+                                            <td><a href="" class="btn-ok" data-address="{{ instance.owner.address }}" data-toggle="modal" data-target="#tool-address">Owner address</a></td>
+                                            {% else %}
+                                            <td><a href="" class="btn-ok" data-address="{{ shed.address }}"  data-toggle="modal" data-target="#tool-address">Shed address</a></td>
+                                            {%endif%}
+                                            {% if instance.status == 'Unavailable' %}
+                                                <td style="color: red">{{ instance.status }}</td>
+                                            {% else %}
+                                                <td style="color: green">{{ instance.status }}</td>
+                                            {% endif %}
+                                            <td>
+                                            {% if instance.owner.email == user.email %}
+                                                <button class="btn btn-danger btn-sm btn-block btn-ok" data-tool-name="{{ instance.name }}" data-href="delete/{{ instance.id }}" data-toggle="modal" data-target="#confirm-delete"><span class="glyphicon glyphicon-remove"></span> Delete</button>
+                                            {% else %}
+                                                <a class="btn btn-primary btn-sm btn-block btn-ok" data-tool-name="{{ instance.name }}" href="request/{{ instance.id }}"><span class="glyphicon glyphicon-check"></span> Request</a>
+                                            </td>
+                                            {% endif %}
+                                        </tr>
+                                        {% endfor %}
+                                        {% else %}
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="bg-warning" style="text-align:center; padding: 3%;">
+                                                        *** No tools to display ***
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                </table>
+                            </div>
+                                <script>
+                                    $('#confirm-delete').on('show.bs.modal', function(e) {
+                                        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                                        $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+
+                                        $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                                        $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+
+                                    });
+
+                                     $('#tool-info').on('show.bs.modal', function(e) {
+                                        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                                        $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+
+                                        $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                                        $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+
+                                        $(this).find('.btn-ok').attr('tool-description', $(e.relatedTarget).data('tool-description'));
+                                        $('.tooldescription').html($(this).find('.btn-ok').attr('tool-description'));
+
+                                        $(this).find('.btn-ok').attr('tool-category', $(e.relatedTarget).data('tool-category'));
+                                        $('.toolcategory').html($(this).find('.btn-ok').attr('tool-category'));
+
+                                        $(this).find('.btn-ok').attr('tool-condition', $(e.relatedTarget).data('tool-condition'));
+                                        $('.toolcondition').html($(this).find('.btn-ok').attr('tool-condition'));
+
+                                        $(this).find('.btn-ok').attr('tool-location', $(e.relatedTarget).data('tool-location'));
+                                        $('.toollocation').html($(this).find('.btn-ok').attr('tool-location'));
+
+                                        $(this).find('.btn-ok').attr('tool-status', $(e.relatedTarget).data('tool-status'));
+                                        $('.toolstatus').html($(this).find('.btn-ok').attr('tool-status'));
+
+                                        $(this).find('.btn-ok').attr('owner-address', $(e.relatedTarget).data('owner-address'));
+                                        $('.owneraddress').html($(this).find('.btn-ok').attr('owner-address'));
+
+                                        $(this).find('.btn-ok').attr('name', $(e.relatedTarget).data('name'));
+                                        $('.name').html($(this).find('.btn-ok').attr('name'));
+
+                                        $(this).find('.btn-ok').attr('address', $(e.relatedTarget).data('address'));
+                                        $('.address').html($(this).find('.btn-ok').attr('address'));
+
+                                        $(this).find('.btn-ok').attr('title', $(e.relatedTarget).data('title'));
+                                        $('.title').html($(this).find('.btn-ok').attr('title'));
+
+                                    });
+
+                                    $('#tool-address').on('show.bs.modal', function(e) {
+                                        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                                        $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+
+                                        $(this).find('.btn-ok').attr('address', $(e.relatedTarget).data('address'));
+                                        $('.tooladdress').html($(this).find('.btn-ok').attr('address'));
+
+                                    });
+                                </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

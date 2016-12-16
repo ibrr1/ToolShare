@@ -1,0 +1,89 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Requested Tools
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+
+    {% if messages %}
+        <b class="messages">
+            {% for msg in messages %}
+                <div style="background-color: #f7c3c3; color: black; font-weight: normal" class="alert alert-{{msg.level_tag}}" role="alert">
+                    {{msg.message}}
+                    <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                </div>
+            {% endfor %}</b>
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="modal fade" id="tool-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Confirm Request</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div style="width: 93%; word-wrap: break-word;">
+                                <p>Are you sure you want to request the tool "{{ tool_requested.name }}"?</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <a class="btn btn-default" data-dismiss="modal">Cancel</a>
+                                <button class="btn btn-primary btn-ok"><span class="glyphicon glyphicon-check"></span> Confirm request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="panel panel-default cols-md-8">
+                <div class="panel-heading"><h4>Time of usage</h4></div>
+                <div class="panel-body" style="width:100%;">
+                        <h4>Tool being requested:</h4>
+                        <table class="table table-striped">
+                            <tr class="info">
+                                <td><b>Tool name</b></td>
+                                <td><b>Condition</b></td>
+                                <td><b>Category</b></td>
+                                <td><b>Status</b></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {{ tool_requested.name }}
+                                </td>
+                                <td>{{ tool_requested.condition }}</td>
+                                <td>{{ tool_requested.category }}</td>
+                                <td style="color: green">{{ tool_requested.status }}</td>
+                            </tr>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-6 date">
+                                {{ request_date_form|crispy }}
+                                <br>
+                                {{ return_date_form|crispy }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-primary btn-ok" data-toggle="modal" data-target="#tool-request">Request</button>
+                    <a style="margin-left: 1%" href="/user_profile/manage_tools/all_tools/share_zone_tools/">Cancel</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('#tool-request').on('show.bs.modal', function(e) {
+                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+            });
+        </script>
+    </div>
+{% endblock %}

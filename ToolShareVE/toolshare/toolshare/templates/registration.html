@@ -1,0 +1,58 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Register
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+
+    {% if messages %}
+        <b class="messages">
+            {% for msg in messages %}
+                <div style="background-color: #f7c3c3; font-weight: normal" class="alert alert-{{msg.level_tag}}" role="alert">
+                    {{msg.message}}
+                    <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                </div>
+            {% endfor %}
+        </b>
+    {% endif %}
+    
+    <div class="container">
+        <br>
+        
+        <div class="panel panel-default" style="width: 60%; margin: 0 auto">
+            <div class="panel-heading">
+                <h4>Register</h4>
+            </div>
+            
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <legend><span class="glyphicon glyphicon-user"></span> Profile Information:</legend>
+                        
+                        <form action="" method="POST">
+                            <!-- user personal info form -->
+                            {% csrf_token %}
+                            {{ form_user_personal_information|crispy }}
+                    
+                    </div>
+                    <div class="col-sm-6">
+                        <legend><span class="glyphicon glyphicon-home"></span> Address Information:</legend>
+                        <!-- user address form -->
+                        {% csrf_token %}
+                        {{ form_address|crispy }}
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-check"></span>  Register Now</button>
+                <a href="/" style="margin-left: 1%">Have an account, Log in</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Tools Requested
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    {% include 'user_profile_navbar.html' %}
+    
+    {% if messages %}
+        <b class="messages">
+            {% for msg in messages %}
+                <div {% if 'coordinator' in msg.messages %}style="background-color: #f7c3c3; font-weight: normal; color: black"{% else %}style="font-weight:normal"{% endif %} class="alert alert-{{msg.level_tag}}" role="alert">
+                    {{msg.message}}
+                    <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                </div>
+            {% endfor %}
+        </b>
+    {% endif %}
+    
+    <div class="container">
+        <div class="modal fade" id="accept-tool-request" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Confirm Request</h4>
+                    </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to accept this request related to the tool "<span class="toolname"></span>"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary btn-ok">Confirm your acceptance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <br>
+        <div class="panel panel-default cols-md-8" style="table-layout: fixed; width: 100%">
+            <div class="panel-heading">
+                <h4>Incoming requested tools</h4>
+            </div>
+        	<div class="panel-body">
+				<table class="table table-striped">
+                    {% if requested_tools %}
+                        <tr class="info">
+                            <td><b>Tool name</b></td>
+                            <td><b>Requester</b></td>
+                            <td><b>Usage start date</b></td>
+                            <td><b>Return date</b></td>
+                            <td><b>Action</b></td>
+                        </tr>
+                        {% for tool in requested_tools %}
+                            <tr>
+                                <td>
+                                    {{ tool.tool_requested.name }}
+                                </td>
+                                <td style="width:10%; word-wrap: break-word;">
+                                <!--<div style="width: 50%;word-wrap: break-word; margin: 0">-->
+                                    {{ tool.requester.first_name }} {{ tool.requester.last_name }} ({{ tool.requester.email }})
+                                <!--</div>-->
+                                </td>
+                                <td>{{ tool.date_request }}</td>
+                                <td>{{ tool.date_return }}</td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm btn-ok" data-tool-name="{{ tool.tool_requested.name }}" data-href="/accept_requested_tool/{{ tool.tool_requested.id }}" data-toggle="modal" data-target="#accept-tool-request"><span class="glyphicon glyphicon-ok"></span> Accept</button>
+                                    <a href="/cancel_requested_tool/{{ tool.tool_requested.id }}"  class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Reject</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <h3>* Nobody has requested tools to you yet. Please, stay tuned. *</h3>
+                    {% endif %}
+                </table>
+        	</div>
+        </div>
+    </div>
+    <script>
+        $('#accept-tool-request').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+            $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+            
+            $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+            $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+        });
+    </script>
+</div>
+{% endblock %}

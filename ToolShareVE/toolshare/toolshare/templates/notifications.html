@@ -1,0 +1,100 @@
+{% extends "master_page.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    Notifications
+    {{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% include 'user_profile_navbar.html' %}
+    {% if messages %}
+        <b class="messages">
+            {% for msg in messages %}
+                <div class="alert alert-{{msg.level_tag}}" style="background-color: #f7c3c3; font-weight: normal" role="alert">
+                    {{msg.message}}
+                    <a data-dismiss="alert" aria-hidden="true" class="close glyphicon glyphicon-remove"></a>
+                </div>
+            {% endfor %}
+         </b>
+    {% endif %}
+    <div class="container">
+        <div class="row">
+            <br>
+            <div class="panel panel-default cols-md-8">
+                <div class="panel-heading"><h4>Notifications</h4></div>
+                <div class="panel-body">
+                    <table class="table">
+                        {% if notifications_exist %}
+                            <tr class="info">
+                                <td><b>Sender</b></td>
+                                <td><b>Tool</b></td>
+                                <td><b>Message</b></td>
+                                <td><b>Sent Time</b></td>
+                                <td><b>Action</b></td>
+                            </tr>
+                            {% for notification in notifications %}
+                                <tr {% if notification.notification_request_type == 'R' %}style="background-color: #ffced5" {% elif notification.notification_request_type == 'C' or notification.notification_request_type == 'M' %}{% else %}style="background-color: #ceffcf"{% endif %}>
+    
+                                    {% if notification.notification_request_type == 'C' %}
+                                        <td style="width: 20%">
+                                            {{ notification.notification_sender }}
+                                        </td>
+                                        
+                                    {% elif notification.notification_request_type == 'M' and not notification.notification_tool %}
+                                        <td style="width: 20%">
+                                            {{ notification.notification_sender }}
+                                        </td>
+                                    {% elif notification.notification_request_type == 'Z' %}
+                                        <td style="width: 20%">
+                                            {{ notification.notification_sender }}
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            {{ notification.notification_tool.owner.first_name }}
+                                            {{ notification.notification_tool.owner.last_name }}
+                                            ({{ notification.notification_tool.owner }})
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        {% if notification.notification_tool == None %}
+                                            Not applicable
+                                        {% else %}
+                                            {{ notification.notification_tool.name }}
+                                        {% endif %}
+                                    </td>
+                                    <td style="width:300px">
+                                        {{ notification.notification_information }}
+                                    </td>
+                                    <td>{{ notification.notification_timestamp }}</td>
+                                    <td>
+                                        {% if notification.notification_request_type == 'C' %}
+                                        <!--<div class="btn-group" role="group" aria-label="...">-->
+                                            <a class="btn btn-primary btn-sm btn-ok" href="/confirm_returned_tool/{{ notification.notification_tool.id }}" style="margin-bottom: 1%"><span class="glyphicon glyphicon-check"></span> Confirm return</a>
+                                            <a class="btn btn-danger btn-sm btn-ok" href="/reject_returned_tool/{{ notification.notification_tool.id }}"><span class="glyphicon glyphicon-remove"></span> Reject return</a>
+                                        <!--</div>-->
+                                        {% else %}
+                                            <a class="btn btn-danger btn-sm btn-ok" href="/delete_notifiation/{{ notification.id }}"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                                        
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                        {% else %}
+                            <h3>* No notifications to display. *</h3>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script>
+            $('#delete-tool-request').on('show.bs.modal', function(e) {
+                $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+                $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+                $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+                $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+            });
+        </script>
+    </div>
+{% endblock %}

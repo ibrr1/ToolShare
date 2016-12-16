@@ -1,0 +1,189 @@
+<div class="container">
+    <div class="row">
+        <div class="panel panel-default cols-md-12" style="margin-bottom: 1px">
+            <div class="panel-heading"> <h4><span class="glyphicon glyphicon-stats"></span> Community Statistics</h4></div>
+        	<div class="panel-body">
+                    <div class="panel panel-default col-md-3" style="box-shadow: 5px 5px 10px #888888; padding: 1% 1% 1% 1%; ">
+                        <div style="width: 100%; word-wrap: break-word;">
+                            <div class="panel-heading" style="background-color: #d9edf7"><h4>Most active lenders</h4></div>
+                                <br>
+                                    <div>
+                                        {%if most_active_lenders%}
+                                        <ol>
+                                        {% for lender in most_active_lenders%}
+                                           <li><a href="" data-toggle="modal" data-target="#confirm-delete" data-user-name="{{ lender.tool_requested__owner__first_name }}
+                                           {{ lender.tool_requested__owner__last_name }}"
+                                                  data-user-email="{{ lender.tool_requested__owner__email }}"
+                                                  data-user-address="{{ lender.tool_requested__owner__address__street_address }}, {{ lender.tool_requested__owner__address__city }}, {{ lender.tool_requested__owner__address__zip_code }}"
+                                                  data-user-type="{% if lender.tool_requested__owner__admin %} Shed's admin {% else %} Regular user {% endif %}"
+                                                  class="btn-ok"> {{lender.tool_requested__owner__first_name}}
+                                                  {{lender.tool_requested__owner__last_name}}</a>
+                                           </li><br>
+                                        {% endfor %}
+                                        </ol>
+                                        {% else %}
+                                            <h6>No statistics to show at this moment.</h6>
+                                        {%endif%}
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-user" ></span> User Information</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div style="width: 100%; word-wrap: break-word;">
+                                            <p><b>Name: </b><span class="username"></span></p>
+                                            <p><b>Email: </b><span class="useremail"></span></p>
+                                            <div style="width: 90%; word-wrap: break-word;">
+                                                <b>Address: </b>
+                                                <span class="useraddress"></span>
+                                            </div><br>
+                                            <p><b>User type: </b><span class="usertype"></span></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-ok" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <div class="modal fade" id="display-tool-info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-wrench" ></span> Tool Information</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div style="width: 100%; word-wrap: break-word;">
+                                            <p> <b>Tool name: </b><span class="toolname"></span></p>
+                                            <p> <b>Location: </b><span class="toollocation"></span></p>
+                                            <p> <b>Category: </b><span class="toolcategory"></span></p>
+                                            <p> <b>Owner: </b><span class="toolowner"></span></p>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default btn-ok" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <div class="panel panel-default col-md-3" style="box-shadow: 5px 5px 10px #888888 ;padding: 1% 1% 1% 1%;">
+                        <div class="panel-heading" style="background-color: #d9edf7"><h4>Most used tools</h4></div>
+                        <br>
+                            {%if most_recently_used_tools%}
+                        <ol>
+                            {% for tool in most_recently_used_tools%}
+                                <li><a href="" data-toggle="modal" data-target="#display-tool-info"
+                                       data-tool-name="{{ tool.tool_requested__name }}"
+                                       data-tool-location="{{ tool.tool_requested__location__street_address }}, {{ tool.tool_requested__location__city }}, {{ tool.tool_requested__location__zip_code }}"
+                                       data-tool-category="{{ tool.tool_requested__category__category }}"
+                                       data-tool-owner=" {{ tool.tool_requested__owner__first_name }} {{ tool.tool_requested__owner__last_name }}"
+                                       class="btn-ok">
+                                    {{tool.tool_requested__name}}
+                                <br></a></li><br>
+                            {% endfor %}
+                            {% else %}
+                                <h6>No statistics to show at this moment.</h6>
+                            {% endif %}
+                            </ol>
+                    </div>
+                    <div class="panel panel-default col-md-3" style="box-shadow: 5px 5px 10px #888888; padding: 1% 1% 1% 1%;">
+                        <div class="panel-heading" style="background-color: #d9edf7"><h4>Most active borrowers</h4></div>
+                        <br>
+                            <div style="width: 100%; word-wrap: break-word;">
+                                <div>
+                                    {%if most_active_borrowers%}
+                                    <ol>
+                                    {% for borrower in most_active_borrowers %}
+                                    <li><a href="" data-toggle="modal" data-target="#confirm-delete"
+                                           data-user-name="{{ borrower.requester__first_name }} {{ borrower.requester__last_name }}"
+                                           data-user-email="{{ borrower.requester__email }}"
+                                           data-user-address="{{ borrower.requester__address__street_address }}, {{ borrower.requester__address__city }}, {{ borrower.requester__address__zip_code }}"
+                                           data-user-type="{% if borrower.requester__admin %} Shed's admin {% else %} Regular user {% endif %}"
+                                           class="btn-ok">{{borrower.requester__first_name}}
+                                    {{borrower.requester__last_name}}</a></li><br>
+                                    {% endfor %}
+                                    </ol>
+                                    {% else %}
+                                        <h6>No statistics to show at this moment.</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                    </div>
+                    <div class="panel panel-default col-md-3" style="box-shadow: 5px 5px 10px #888888; padding: 1% 1% 1% 1%;">
+                        <div class="panel-heading" style="background-color: #d9edf7"><h4>Most recently used tools</h4></div>
+                        <br>
+                            <div style="width: 100%; word-wrap: break-word;">
+                                {%if most_recently_used_tools%}
+                                <ol>
+                                {% for tool in most_recently_used_tools %}
+                                    <li><a href="" data-toggle="modal" data-target="#display-tool-info"
+                                           data-tool-name="{{ tool.tool_requested__name }}"
+                                           data-tool-location="{{ tool.tool_requested__location__street_address }}, {{ tool.tool_requested__location__city }}, {{ tool.tool_requested__location__zip_code }}"
+                                           data-tool-category="{{ tool.tool_requested__category__category }}"
+                                           data-tool-owner=" {{ tool.tool_requested__owner__first_name }} {{ tool.tool_requested__owner__last_name }}"
+                                           class="btn-ok">
+                                        {{tool.tool_requested__name}}
+                                    <br></a></li><br>
+                                {% endfor %}
+                                {% else %}
+                                    <h6>No statistics to show at this moment.</h6>
+                                {% endif %}
+                                </ol>
+                            </div>
+                    </div>
+            	</div>
+        </div>
+
+<br>
+
+
+
+
+    </div>
+ <script>
+    $('#confirm-delete').on('show.bs.modal', function(e) {
+        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+        $(this).find('.btn-ok').attr('user-name', $(e.relatedTarget).data('user-name'));
+        $('.username').html($(this).find('.btn-ok').attr('user-name'));
+
+        $(this).find('.btn-ok').attr('user-email', $(e.relatedTarget).data('user-email'));
+        $('.useremail').html($(this).find('.btn-ok').attr('user-email'));
+
+        $(this).find('.btn-ok').attr('user-address', $(e.relatedTarget).data('user-address'));
+        $('.useraddress').html($(this).find('.btn-ok').attr('user-address'));
+
+        $(this).find('.btn-ok').attr('user-type', $(e.relatedTarget).data('user-type'));
+        $('.usertype').html($(this).find('.btn-ok').attr('user-type'));
+    });
+
+    $('#display-tool-info').on('show.bs.modal', function(e) {
+        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        $('.delete').html('<strong>' + $(this).find('.btn-ok').attr('href') + '</strong>');
+
+        $(this).find('.btn-ok').attr('tool-name', $(e.relatedTarget).data('tool-name'));
+        $('.toolname').html($(this).find('.btn-ok').attr('tool-name'));
+
+        $(this).find('.btn-ok').attr('tool-location', $(e.relatedTarget).data('tool-location'));
+        $('.toollocation').html($(this).find('.btn-ok').attr('tool-location'));
+
+        $(this).find('.btn-ok').attr('tool-category', $(e.relatedTarget).data('tool-category'));
+        $('.toolcategory').html($(this).find('.btn-ok').attr('tool-category'));
+
+        $(this).find('.btn-ok').attr('tool-location', $(e.relatedTarget).data('tool-location'));
+        $('.toollocation').html($(this).find('.btn-ok').attr('tool-location'));
+
+        $(this).find('.btn-ok').attr('tool-owner', $(e.relatedTarget).data('tool-owner'));
+        $('.toolowner').html($(this).find('.btn-ok').attr('tool-owner'));
+    });
+</script>
+</div>
+
