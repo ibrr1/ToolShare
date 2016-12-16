@@ -1,5 +1,3 @@
-ToolShare
-
 DESCRIPTION
 -----------
 ToolShare is a web application developed using Django which mainly allows users in the same neighborhood to share and borrow tools from each other Some other features the app has are: 
